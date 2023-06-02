@@ -6,11 +6,12 @@ public class Disease extends Agent{
     private int incubationPeriod;
     private double mortalityRate;
 
-    public Disease(String name, double infectionRate, int incubationPeriod, double mortalityRate) {
+//    public Disease(String name, double infectionRate, int incubationPeriod, double mortalityRate) {
+    public Disease(String name) {
         this.name = name;
-        this.infectionRate = infectionRate;
-        this.incubationPeriod = incubationPeriod;
-        this.mortalityRate = mortalityRate;
+//        this.infectionRate = infectionRate;
+//        this.incubationPeriod = incubationPeriod;
+//        this.mortalityRate = mortalityRate;
     }
 
     public String getName() {

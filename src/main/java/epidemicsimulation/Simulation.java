@@ -21,7 +21,8 @@ public class Simulation {
         int incubationPeriod = 14;
         int mortalityRate = 5;
 
-        disease = new Disease(diseaseName, infectionRate, incubationPeriod, mortalityRate);
+//        disease = new Disease(diseaseName, infectionRate, incubationPeriod, mortalityRate);
+
 
         // Inicjalizacja kwarantanny
         String quarantineLocation = "City A";
