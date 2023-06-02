@@ -14,6 +14,10 @@ public class Agent{
     private int recoveryTime;
     private int row;
     private int col;
+    private int currentRow;
+    private int currentCol;
+    private int targetRow;
+    private int targetCol;
 
     public Agent(){
         this.name = name;
@@ -24,7 +28,11 @@ public class Agent{
     public Agent(int row, int col){
         this();
         this.row = row;
-        this.col = col;    }
+        this.col = col;
+        this.currentRow = row;
+        this.currentCol = col;
+        this.targetRow = row;
+        this.targetCol = col;}
 
     public void infect(Disease disease)
     {
@@ -67,12 +75,40 @@ public class Agent{
         return disease;
     }
 
+
+
+    public void setCurrentPosition(int row, int col)
+    {
+        this.currentRow = row;
+        this.currentCol = col;
+    }
+    public void setTargetPosition(int row, int col)
+    {
+        this.targetRow = row;
+        this.targetCol = col;
+    }
     public int getRow(){
         return row;
     }
     public int getCol(){
         return col;
     }
+    public int getCurrentRow() {
+        return currentRow;
+    }
+
+    public int getCurrentCol() {
+        return currentCol;
+    }
+    public int getTargetRow() {
+        return targetRow;
+    }
+
+    public int getTargetCol() {
+        return targetCol;
+    }
+
+
 
 
 

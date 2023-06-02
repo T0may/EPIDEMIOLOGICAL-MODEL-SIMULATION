@@ -15,7 +15,7 @@ public class SimulationGUI extends JFrame{
     private JButton startButton;
 
     private List<Agent> agents;
-
+    private JPanel[][] cellPanels;
     public SimulationGUI()
     {
         setTitle("Epidemiological Model Simulation");
@@ -31,25 +31,24 @@ public class SimulationGUI extends JFrame{
         setLocationRelativeTo(null);
     }
 
-    private void createGridPanel()
-    {
-        gridPanel = new JPanel(new GridLayout(50,80));
+    private void createGridPanel() {
+        gridPanel = new JPanel(new GridLayout(50, 80));
+        cellPanels = new JPanel[50][80];
 
-        // LAYOUT APPEARANCE OF GRID PANEL
-        for(int row = 0; row < 50; row++)
-        {
-            for(int col = 0; col < 80; col++)
-            {
+        for (int row = 0; row < 50; row++) {
+            for (int col = 0; col < 80; col++) {
+                JPanel cellPanel = new JPanel();
+                cellPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
+                cellPanel.setBackground(Color.darkGray);
 
-                JPanel fieldPanel = new JPanel();
-                fieldPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
-                fieldPanel.setBackground(Color.darkGray);
-                gridPanel.add(fieldPanel);
+                gridPanel.add(cellPanel);
+                cellPanels[row][col] = cellPanel;
             }
         }
 
         add(gridPanel, BorderLayout.CENTER);
     }
+
     private void createControlPanel()
     {
         JPanel controlPanel = new JPanel();
@@ -119,37 +118,79 @@ public class SimulationGUI extends JFrame{
             int row = random.nextInt(50);
             int col = random.nextInt(80);
 
+
             Agent agent = new Agent(row, col);
+            agent.setCurrentPosition(row, col);
+            agent.setTargetPosition(row,col);
             agents.add(agent);
 
+            Timer timer = new Timer(2000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    moveAgent(agent);
+                }
+            });
+            timer.setRepeats(false);
+            timer.start();
         }
     }
-    private void updateGridAppearance(){
-
-        gridPanel.removeAll();
-
-        for (int row = 0; row < 50; row++)
-        {
-            for (int col = 0; col < 80; col++)
-            {
-                JPanel cellPanel = new JPanel();
-                cellPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
+    private void updateGridAppearance() {
+        for (int row = 0; row < 50; row++) {
+            for (int col = 0; col < 80; col++) {
+                JPanel cellPanel = cellPanels[row][col];
                 cellPanel.setBackground(Color.darkGray);
-
-                for (Agent agent : agents)
-                {
-                    if(agent.getRow() == row && agent.getCol() == col)
-                    {
-                        cellPanel.setBackground(Color.pink);
-                        break;
-                    }
-                }
-                gridPanel.add(cellPanel);
+                gridPanel.add(cellPanel); // adding cell to grid
             }
         }
+
+        for (Agent agent : agents) {
+            int row = agent.getRow();
+            int col = agent.getCol();
+            JPanel cellPanel = cellPanels[row][col];
+            cellPanel.setBackground(Color.pink);
+        }
+
         gridPanel.revalidate();
         gridPanel.repaint();
     }
+
+
+
+    private void moveAgent(Agent agent) {
+        int currentRow = agent.getCurrentRow();
+        int currentCol = agent.getCurrentCol();
+        int targetRow = agent.getTargetRow();
+        int targetCol = agent.getTargetCol();
+
+        if (currentRow == targetRow && currentCol == targetCol) {
+            Random random = new Random();
+            int newRow = random.nextInt(50);
+            int newCol = random.nextInt(80);
+            agent.setTargetPosition(newRow, newCol);
+            targetRow = newRow;
+            targetCol = newCol;
+            System.out.println(targetRow);
+            System.out.println(targetCol);
+        }
+
+        int newRow = Integer.compare(targetRow, currentRow) + currentRow;
+        int newCol = Integer.compare(targetCol, currentCol) + currentCol;
+
+        agent.setCurrentPosition(newRow, newCol);
+        cellPanels[currentRow][currentCol].setBackground(Color.darkGray);
+        cellPanels[newRow][newCol].setBackground(Color.pink);
+
+
+        Timer timer = new Timer(2000, e -> {
+            moveAgent(agent);
+        });
+        timer.setRepeats(false);
+        timer.start();
+
+
+    }
+
+
 
 
     public static void main(String[] args) {
