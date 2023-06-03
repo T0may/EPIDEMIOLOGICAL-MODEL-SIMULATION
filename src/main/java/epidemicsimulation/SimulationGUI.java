@@ -16,6 +16,7 @@ public class SimulationGUI extends JFrame{
 
     private List<Agent> agents;
     private JPanel[][] cellPanels;
+    private boolean simulationStarted;
     public SimulationGUI()
     {
         setTitle("Epidemiological Model Simulation");
@@ -29,6 +30,8 @@ public class SimulationGUI extends JFrame{
 
         pack();
         setLocationRelativeTo(null);
+        simulationStarted = false;
+
     }
 
     private void createGridPanel() {
@@ -76,6 +79,10 @@ public class SimulationGUI extends JFrame{
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (simulationStarted)
+                {
+                    return;
+                }
                 String diseaseName = diseaseNameTextField.getText();
                 int populationSize = Integer.parseInt(populationSizeTextField.getText());
 
@@ -93,6 +100,7 @@ public class SimulationGUI extends JFrame{
 //                here parameters are going to be used
                 System.out.println("Disease Name: " + diseaseName);
                 System.out.println("Population size: " + populationSize);
+                simulationStarted = true;
             }
         });
 
