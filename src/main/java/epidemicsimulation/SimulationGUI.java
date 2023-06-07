@@ -17,6 +17,9 @@ public class SimulationGUI extends JFrame{
     private List<Agent> agents;
     private JPanel[][] cellPanels;
     private boolean simulationStarted;
+
+
+
     public SimulationGUI()
     {
         setTitle("Epidemiological Model Simulation");
@@ -100,6 +103,11 @@ public class SimulationGUI extends JFrame{
 //                here parameters are going to be used
                 System.out.println("Disease Name: " + diseaseName);
                 System.out.println("Population size: " + populationSize);
+
+                AgentMovementWorker worker = new AgentMovementWorker(agents, cellPanels);
+                worker.execute();
+
+
                 simulationStarted = true;
             }
         });
@@ -115,33 +123,37 @@ public class SimulationGUI extends JFrame{
         add(controlPanel2, BorderLayout.NORTH);
     }
 
-    private void initializeAgents(int populationSize)
-    {
+    private void initializeAgents(int populationSize) {
         agents = new ArrayList<>();
 
-        // create agents and randomly assing them to grid cells
+        // create agents and randomly assign them to grid cells
         Random random = new Random();
-        for (int i = 0; i < populationSize; i++)
-        {
+        for (int i = 0; i < populationSize; i++) {
             int row = random.nextInt(50);
             int col = random.nextInt(80);
 
-
             Agent agent = new Agent(row, col);
             agent.setCurrentPosition(row, col);
-            agent.setTargetPosition(row,col);
+            agent.setTargetPosition(row, col);
             agents.add(agent);
-
-            Timer timer = new Timer(2000, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    moveAgent(agent);
-                }
-            });
-            timer.setRepeats(false);
-            timer.start();
         }
+
+        Timer timer = new Timer(4000, new ActionListener() {
+            private int currentIndex = 0;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (currentIndex < agents.size()) {
+                    moveAgent(agents.get(currentIndex));
+                    currentIndex++;
+                } else {
+                    ((Timer) e.getSource()).stop();
+                }
+            }
+        });
+        timer.start();
     }
+
     private void updateGridAppearance() {
         for (int row = 0; row < 50; row++) {
             for (int col = 0; col < 80; col++) {
@@ -165,37 +177,15 @@ public class SimulationGUI extends JFrame{
 
 
     private void moveAgent(Agent agent) {
-        int currentRow = agent.getCurrentRow();
-        int currentCol = agent.getCurrentCol();
-        int targetRow = agent.getTargetRow();
-        int targetCol = agent.getTargetCol();
+        agent.move();
 
-        if (currentRow == targetRow && currentCol == targetCol) {
-            Random random = new Random();
-            int newRow = random.nextInt(50);
-            int newCol = random.nextInt(80);
-            agent.setTargetPosition(newRow, newCol);
-            targetRow = newRow;
-            targetCol = newCol;
-            System.out.println(targetRow);
-            System.out.println(targetCol);
-        }
-
-        int newRow = Integer.compare(targetRow, currentRow) + currentRow;
-        int newCol = Integer.compare(targetCol, currentCol) + currentCol;
-
-        agent.setCurrentPosition(newRow, newCol);
-        cellPanels[currentRow][currentCol].setBackground(Color.darkGray);
-        cellPanels[newRow][newCol].setBackground(Color.pink);
-
-
-        Timer timer = new Timer(2000, e -> {
-            moveAgent(agent);
+        SwingUtilities.invokeLater(() -> {
+            updateGridAppearance();
         });
+
+        Timer timer = new Timer(4000, e -> moveAgent(agent));
         timer.setRepeats(false);
         timer.start();
-
-
     }
 
 

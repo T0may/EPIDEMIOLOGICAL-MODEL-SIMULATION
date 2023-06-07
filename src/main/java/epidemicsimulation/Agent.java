@@ -1,6 +1,7 @@
 package epidemicsimulation;
 
 import java.util.List;
+import java.util.Random;
 
 public class Agent{
     public enum State {
@@ -61,6 +62,7 @@ public class Agent{
         }
     }
 
+
     public State getState(){
         return state;
     }
@@ -77,22 +79,26 @@ public class Agent{
 
 
 
-    public void setCurrentPosition(int row, int col)
-    {
+    public void setCurrentPosition(int row, int col) {
+        this.row = row;
+        this.col = col;
         this.currentRow = row;
         this.currentCol = col;
     }
-    public void setTargetPosition(int row, int col)
-    {
+
+    public void setTargetPosition(int row, int col) {
         this.targetRow = row;
         this.targetCol = col;
     }
-    public int getRow(){
+
+    public int getRow() {
         return row;
     }
-    public int getCol(){
+
+    public int getCol() {
         return col;
     }
+
     public int getCurrentRow() {
         return currentRow;
     }
@@ -100,6 +106,7 @@ public class Agent{
     public int getCurrentCol() {
         return currentCol;
     }
+
     public int getTargetRow() {
         return targetRow;
     }
@@ -108,7 +115,26 @@ public class Agent{
         return targetCol;
     }
 
+    public void move() {
+        int currentRow = getCurrentRow();
+        int currentCol = getCurrentCol();
+        int targetRow = getTargetRow();
+        int targetCol = getTargetCol();
 
+        if (currentRow == targetRow && currentCol == targetCol) {
+            Random random = new Random();
+            int newRow = random.nextInt(50);
+            int newCol = random.nextInt(80);
+            setTargetPosition(newRow, newCol);
+            targetRow = newRow;
+            targetCol = newCol;
+        }
+
+        int newRow = Integer.compare(targetRow, currentRow) + currentRow;
+        int newCol = Integer.compare(targetCol, currentCol) + currentCol;
+
+        setCurrentPosition(newRow, newCol);
+    }
 
 
 
