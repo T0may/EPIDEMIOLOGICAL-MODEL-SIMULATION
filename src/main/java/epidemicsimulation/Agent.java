@@ -1,16 +1,16 @@
 package epidemicsimulation;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Random;
 
 public class Agent{
-    public enum State {
+    public enum AgentStatus {
         SUSCEPTIBLE,
         INFECTED,
         RECOVERED
     }
-    private String name;
-    private State state;
+    private AgentStatus status;
     private Disease disease;
     private int recoveryTime;
     private int row;
@@ -19,12 +19,14 @@ public class Agent{
     private int currentCol;
     private int targetRow;
     private int targetCol;
+    private Color color;
+
 
     public Agent(){
-        this.name = name;
-        this.state = State.SUSCEPTIBLE;
+        this.status = status.SUSCEPTIBLE;
         this.disease = null;
         this.recoveryTime = 0;
+        this.color = Color.WHITE;
     }
     public Agent(int row, int col){
         this();
@@ -37,44 +39,51 @@ public class Agent{
 
     public void infect(Disease disease)
     {
-        if (state == State.SUSCEPTIBLE) {
-            this.state = State.INFECTED;
+        if (status == status.SUSCEPTIBLE) {
+            this.status = status.INFECTED;
             this.disease = disease;
             this.recoveryTime = disease.getIncubationPeriod();
+            this.color = Color.RED;
             System.out.println("Agent has been infected with" + disease.getName());
         }else{
-            System.out.println("Agent is already" + state);
+            System.out.println("Agent is already" + status);
         }
     }
 
     public void recover()
     {
-        if (state == State.INFECTED && recoveryTime <= 0)
-        {
-            this.state = State.RECOVERED;
+        if (status == status.INFECTED && recoveryTime <= 0) {
+            this.status = status.RECOVERED;
             this.disease = null;
+            this.color = Color.GREEN;
             System.out.println("Agent has recovered from the disease");
-        }else if (state == State.INFECTED && recoveryTime > 0)
-        {
-            System.out.println("Agent has recovered from the disease");
+        } else if (status == status.INFECTED && recoveryTime > 0) {
+            System.out.println("Agent is still infected");
         } else {
             System.out.println("Agent is not infected");
         }
     }
 
 
-    public State getState(){
-        return state;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public String getName(){
-        return name;
-    }
+
     public Disease getDisease()
     {
         return disease;
+    }
+    public AgentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AgentStatus status) {
+        this.status = status;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
 
@@ -123,8 +132,8 @@ public class Agent{
 
         if (currentRow == targetRow && currentCol == targetCol) {
             Random random = new Random();
-            int newRow = random.nextInt(50);
-            int newCol = random.nextInt(80);
+            int newRow = random.nextInt(40);
+            int newCol = random.nextInt(50);
             setTargetPosition(newRow, newCol);
             targetRow = newRow;
             targetCol = newCol;
@@ -135,6 +144,7 @@ public class Agent{
 
         setCurrentPosition(newRow, newCol);
     }
+
 
 
 

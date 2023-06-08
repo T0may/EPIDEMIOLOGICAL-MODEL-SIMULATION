@@ -12,6 +12,7 @@ public class SimulationGUI extends JFrame{
     private JPanel gridPanel;
     private JTextField diseaseNameTextField;
     private JTextField populationSizeTextField;
+    private JTextField infectedCountLabelTextField;
     private JButton startButton;
 
     private List<Agent> agents;
@@ -38,11 +39,11 @@ public class SimulationGUI extends JFrame{
     }
 
     private void createGridPanel() {
-        gridPanel = new JPanel(new GridLayout(50, 80));
+        gridPanel = new JPanel(new GridLayout(40, 50));
         cellPanels = new JPanel[50][80];
 
-        for (int row = 0; row < 50; row++) {
-            for (int col = 0; col < 80; col++) {
+        for (int row = 0; row < 40; row++) {
+            for (int col = 0; col < 50; col++) {
                 JPanel cellPanel = new JPanel();
                 cellPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
                 cellPanel.setBackground(Color.darkGray);
@@ -70,12 +71,17 @@ public class SimulationGUI extends JFrame{
         populationSizeLabel.setForeground(Color.WHITE);
         populationSizeTextField = new JTextField();
 
+        JLabel infectedCountLabel = new JLabel("Infected Count: ");
+        infectedCountLabel.setForeground(Color.WHITE);
+        infectedCountLabelTextField = new JTextField();
 
 
         controlPanel.add(diseaseNameLabel);
         controlPanel.add(diseaseNameTextField);
         controlPanel.add(populationSizeLabel);
         controlPanel.add(populationSizeTextField);
+        controlPanel.add(infectedCountLabel);
+        controlPanel.add(infectedCountLabelTextField);
 
 
         startButton = new JButton("Start");
@@ -88,10 +94,11 @@ public class SimulationGUI extends JFrame{
                 }
                 String diseaseName = diseaseNameTextField.getText();
                 int populationSize = Integer.parseInt(populationSizeTextField.getText());
+                int infectedCount = Integer.parseInt(infectedCountLabelTextField.getText());
 
                 gridPanel.removeAll();
 
-                initializeAgents(populationSize);
+                initializeAgents(populationSize, infectedCount);
 
                 updateGridAppearance();
 
@@ -123,22 +130,27 @@ public class SimulationGUI extends JFrame{
         add(controlPanel2, BorderLayout.NORTH);
     }
 
-    private void initializeAgents(int populationSize) {
+    private void initializeAgents(int populationSize, int infectedCount) {
         agents = new ArrayList<>();
 
         // create agents and randomly assign them to grid cells
         Random random = new Random();
         for (int i = 0; i < populationSize; i++) {
-            int row = random.nextInt(50);
-            int col = random.nextInt(80);
+            int row = random.nextInt(40);
+            int col = random.nextInt(50);
+
 
             Agent agent = new Agent(row, col);
             agent.setCurrentPosition(row, col);
             agent.setTargetPosition(row, col);
+            if (i < infectedCount) {
+                agent.setStatus(Agent.AgentStatus.INFECTED);
+                agent.setColor(Color.RED);
+            }
             agents.add(agent);
         }
 
-        Timer timer = new Timer(4000, new ActionListener() {
+        Timer timer = new Timer(2000, new ActionListener() {
             private int currentIndex = 0;
 
             @Override
@@ -155,11 +167,11 @@ public class SimulationGUI extends JFrame{
     }
 
     private void updateGridAppearance() {
-        for (int row = 0; row < 50; row++) {
-            for (int col = 0; col < 80; col++) {
+        for (int row = 0; row < 40; row++) {
+            for (int col = 0; col < 50; col++) {
                 JPanel cellPanel = cellPanels[row][col];
                 cellPanel.setBackground(Color.darkGray);
-                gridPanel.add(cellPanel); // adding cell to grid
+                gridPanel.add(cellPanel);
             }
         }
 
@@ -167,11 +179,19 @@ public class SimulationGUI extends JFrame{
             int row = agent.getRow();
             int col = agent.getCol();
             JPanel cellPanel = cellPanels[row][col];
-            cellPanel.setBackground(Color.pink);
+            switch (agent.getStatus()) {
+                case SUSCEPTIBLE:
+                    cellPanel.setBackground(Color.PINK);
+                    break;
+                case INFECTED:
+                    cellPanel.setBackground(agent.getColor());
+                    break;
+                case RECOVERED:
+                    cellPanel.setBackground(Color.GREEN);
+                    break;
+            }
         }
 
-        gridPanel.revalidate();
-        gridPanel.repaint();
     }
 
 
@@ -183,7 +203,7 @@ public class SimulationGUI extends JFrame{
             updateGridAppearance();
         });
 
-        Timer timer = new Timer(4000, e -> moveAgent(agent));
+        Timer timer = new Timer(2000, e -> moveAgent(agent));
         timer.setRepeats(false);
         timer.start();
     }

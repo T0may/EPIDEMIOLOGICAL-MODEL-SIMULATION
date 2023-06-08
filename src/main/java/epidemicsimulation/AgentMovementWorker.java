@@ -10,9 +10,11 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
     private List<Agent> agents;
     private JPanel[][] cellPanels;
 
+
     public AgentMovementWorker(List<Agent> agents, JPanel[][] cellPanels) {
         this.agents = agents;
         this.cellPanels = cellPanels;
+
     }
 
     @Override
@@ -31,8 +33,8 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
     @Override
     protected void process(List<Void> chunks) {
         //  interface update
-        for (int row = 0; row < 50; row++) {
-            for (int col = 0; col < 80; col++) {
+        for (int row = 0; row < 40; row++) {
+            for (int col = 0; col < 50; col++) {
                 JPanel cellPanel = cellPanels[row][col];
                 cellPanel.setBackground(Color.darkGray);
             }
@@ -42,7 +44,19 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
             int row = agent.getRow();
             int col = agent.getCol();
             JPanel cellPanel = cellPanels[row][col];
-            cellPanel.setBackground(Color.pink);
+            switch (agent.getStatus()) {
+                case SUSCEPTIBLE:
+                    cellPanel.setBackground(Color.PINK);
+                    break;
+                case INFECTED:
+                    cellPanel.setBackground(agent.getColor());
+                    break;
+                case RECOVERED:
+                    cellPanel.setBackground(Color.GREEN);
+                    break;
+            }
         }
+
+
     }
 }

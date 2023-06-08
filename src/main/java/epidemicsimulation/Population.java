@@ -14,38 +14,39 @@ public class Population {
         recoveredCount = 0;
     }
 
-    public List<Agent> getAgents()
-    {
+    public List<Agent> getAgents() {
         return agents;
     }
 
-    public int getInfectedCount()
-    {
+    public int getInfectedCount() {
         return infectedCount;
     }
-    public int getRecoveredCount()
-    {
-        return getRecoveredCount();
+
+    public int getRecoveredCount() {
+        return recoveredCount;
     }
-    public void addAgent(Agent agent)
-    {
+
+    public void addAgent(Agent agent) {
         agents.add(agent);
+
+        // check agents state and update
+        if (agent.getStatus() == Agent.AgentStatus.INFECTED) {
+            infectedCount++;
+        } else if (agent.getStatus() == Agent.AgentStatus.RECOVERED) {
+            recoveredCount++;
+        }
     }
-    public void updatePopulationState()
-    {
-//        iterujemy przez liste agentow w populacji dla kazdego sprawdzamy jego stan
+
+    public void updatePopulationState() {
         infectedCount = 0;
         recoveredCount = 0;
 
         for (Agent agent : agents) {
-            if (agent.getState() == Agent.State.INFECTED) {
+            if (agent.getStatus() == Agent.AgentStatus.INFECTED) {
                 infectedCount++;
-            } else if (agent.getState() == Agent.State.RECOVERED) {
+            } else if (agent.getStatus() == Agent.AgentStatus.RECOVERED) {
                 recoveredCount++;
             }
         }
-
-        this.infectedCount = infectedCount;
-        this.recoveredCount = recoveredCount;
     }
 }

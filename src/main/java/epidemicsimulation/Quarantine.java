@@ -20,15 +20,12 @@ public class Quarantine {
         if (currentOccupancy < capacity) {
             quarantinedAgents.add(agent);
             currentOccupancy++;
-            System.out.println(agent.getName() + " has been added to quarantine at " + location);
-        } else {
-            System.out.println("Quarantine at " + location + " is at full capacity. Cannot add " + agent.getName());
         }
     }
 
     public void monitorHealthStatus() {
         for (Agent agent : quarantinedAgents) {
-            agent.getState(); // getState() is a method in the Agent class
+            agent.getStatus(); // getState() is a method in the Agent class
         }
     }
 
@@ -36,9 +33,8 @@ public class Quarantine {
         if (quarantinedAgents.contains(agent)) {
             quarantinedAgents.remove(agent);
             currentOccupancy--;
-            System.out.println(agent.getName() + " has been released from quarantine at " + location);
         } else {
-            System.out.println(agent.getName() + " is not currently in quarantine at " + location);
+
         }
     }
 }
