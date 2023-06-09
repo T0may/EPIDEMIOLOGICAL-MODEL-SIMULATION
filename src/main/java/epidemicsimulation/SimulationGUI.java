@@ -150,20 +150,6 @@ public class SimulationGUI extends JFrame{
             agents.add(agent);
         }
 
-        Timer timer = new Timer(2000, new ActionListener() {
-            private int currentIndex = 0;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (currentIndex < agents.size()) {
-                    moveAgent(agents.get(currentIndex));
-                    currentIndex++;
-                } else {
-                    ((Timer) e.getSource()).stop();
-                }
-            }
-        });
-        timer.start();
     }
 
     private void updateGridAppearance() {
@@ -202,13 +188,7 @@ public class SimulationGUI extends JFrame{
         SwingUtilities.invokeLater(() -> {
             updateGridAppearance();
         });
-
-        Timer timer = new Timer(2000, e -> moveAgent(agent));
-        timer.setRepeats(false);
-        timer.start();
     }
-
-
 
 
     public static void main(String[] args) {

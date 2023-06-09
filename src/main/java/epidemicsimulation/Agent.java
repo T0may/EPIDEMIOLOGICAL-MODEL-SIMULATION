@@ -142,11 +142,9 @@ public class Agent{
         int newRow = Integer.compare(targetRow, currentRow) + currentRow;
         int newCol = Integer.compare(targetCol, currentCol) + currentCol;
 
+        System.out.println("Row" + newRow);
+        System.out.println("Col" +newCol);
         setCurrentPosition(newRow, newCol);
     }
-
-
-
-
 
 }
