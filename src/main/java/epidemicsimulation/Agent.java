@@ -24,9 +24,9 @@ public class Agent{
 
     public Agent(){
         this.status = status.SUSCEPTIBLE;
-        this.disease = null;
+
         this.recoveryTime = 0;
-        this.color = Color.WHITE;
+
     }
     public Agent(int row, int col){
         this();
@@ -35,7 +35,9 @@ public class Agent{
         this.currentRow = row;
         this.currentCol = col;
         this.targetRow = row;
-        this.targetCol = col;}
+        this.targetCol = col;
+        this.disease = new Disease();
+    }
 
     public void infect(Disease disease)
     {
@@ -64,8 +66,6 @@ public class Agent{
         }
     }
 
-
-
     public Disease getDisease()
     {
         return disease;
@@ -85,8 +85,6 @@ public class Agent{
     public void setColor(Color color) {
         this.color = color;
     }
-
-
 
     public void setCurrentPosition(int row, int col) {
         this.row = row;
@@ -132,8 +130,8 @@ public class Agent{
 
         if (currentRow == targetRow && currentCol == targetCol) {
             Random random = new Random();
-            int newRow = random.nextInt(40);
-            int newCol = random.nextInt(50);
+            int newRow = random.nextInt(60);
+            int newCol = random.nextInt(80);
             setTargetPosition(newRow, newCol);
             targetRow = newRow;
             targetCol = newCol;
@@ -142,9 +140,33 @@ public class Agent{
         int newRow = Integer.compare(targetRow, currentRow) + currentRow;
         int newCol = Integer.compare(targetCol, currentCol) + currentCol;
 
-        System.out.println("Row" + newRow);
-        System.out.println("Col" +newCol);
+//        System.out.println("Row" + newRow);
+//        System.out.println("Col" +newCol);
         setCurrentPosition(newRow, newCol);
+    }
+
+    public void checkInfection(List<Agent> agents) {
+        for (Agent otherAgent : agents) {
+            if (this == otherAgent) {
+                continue;
+            }
+
+            int rowDiff = Math.abs(getRow() - otherAgent.getRow());
+            int colDiff = Math.abs(getCol() - otherAgent.getCol());
+
+            System.out.println("Row difference: " + rowDiff);
+            System.out.println("Column difference: " + colDiff);
+            System.out.println("Other agent status: " + otherAgent.getStatus());
+            System.out.println("This agent status: " + this.getStatus());
+
+            // Check if the other agent is one square away
+            if (rowDiff <= 1 && colDiff <= 1 && otherAgent.getStatus() == AgentStatus.SUSCEPTIBLE && this.getStatus() == AgentStatus.INFECTED) {
+
+                otherAgent.infect(this.getDisease());
+                System.out.println("Agent infected another agent with");
+
+            }
+        }
     }
 
 }

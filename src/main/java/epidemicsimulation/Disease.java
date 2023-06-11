@@ -7,16 +7,39 @@ public class Disease extends Agent{
     private double mortalityRate;
 
 //    public Disease(String name, double infectionRate, int incubationPeriod, double mortalityRate) {
-    public Disease(String name) {
-        this.name = name;
-//        this.infectionRate = infectionRate;
-//        this.incubationPeriod = incubationPeriod;
-//        this.mortalityRate = mortalityRate;
+    public Disease() {
+
+    }
+
+    private void setDiseaseProperties(String name)
+    {
+        switch(name)
+        {
+            case "COVID-19":
+                infectionRate = 0.8;
+                incubationPeriod = 14;
+                mortalityRate = 3;
+                break;
+            case "Influenza":
+                infectionRate = 0.6;
+                incubationPeriod = 7;
+                mortalityRate = 1;
+                break;
+            case "Common Cold":
+                infectionRate = 0.4;
+                incubationPeriod = 3;
+                mortalityRate = 0;
+            default:
+                System.out.println("Invalid disease name");
+                break;
+        }
     }
 
     public String getName() {
         return name;
     }
+
+    public void setName(String name) {this.name = name;}
 
     public double getInfectionRate() {
         return infectionRate;

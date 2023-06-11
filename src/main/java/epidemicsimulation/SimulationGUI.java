@@ -39,11 +39,11 @@ public class SimulationGUI extends JFrame{
     }
 
     private void createGridPanel() {
-        gridPanel = new JPanel(new GridLayout(40, 50));
-        cellPanels = new JPanel[50][80];
+        gridPanel = new JPanel(new GridLayout(60, 80));
+        cellPanels = new JPanel[60][80];
 
-        for (int row = 0; row < 40; row++) {
-            for (int col = 0; col < 50; col++) {
+        for (int row = 0; row < 60; row++) {
+            for (int col = 0; col < 80; col++) {
                 JPanel cellPanel = new JPanel();
                 cellPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
                 cellPanel.setBackground(Color.darkGray);
@@ -63,7 +63,7 @@ public class SimulationGUI extends JFrame{
         controlPanel.setBackground(Color.DARK_GRAY);
 
 
-        JLabel diseaseNameLabel = new JLabel("Disease Name: ");
+        JLabel diseaseNameLabel = new JLabel("Disease Name (COVID-19, Influenza, Common Cold): ");
         diseaseNameLabel.setForeground(Color.WHITE);
         diseaseNameTextField = new JTextField();
 
@@ -136,15 +136,20 @@ public class SimulationGUI extends JFrame{
         // create agents and randomly assign them to grid cells
         Random random = new Random();
         for (int i = 0; i < populationSize; i++) {
-            int row = random.nextInt(40);
-            int col = random.nextInt(50);
+            int row = random.nextInt(60);
+            int col = random.nextInt(80);
 
 
             Agent agent = new Agent(row, col);
             agent.setCurrentPosition(row, col);
             agent.setTargetPosition(row, col);
             if (i < infectedCount) {
+                String diseaseName = diseaseNameTextField.getText();
+                Disease disease = new Disease();
                 agent.setStatus(Agent.AgentStatus.INFECTED);
+
+
+                agent.getDisease().setName(diseaseNameTextField.getText());
                 agent.setColor(Color.RED);
             }
             agents.add(agent);
@@ -153,8 +158,8 @@ public class SimulationGUI extends JFrame{
     }
 
     private void updateGridAppearance() {
-        for (int row = 0; row < 40; row++) {
-            for (int col = 0; col < 50; col++) {
+        for (int row = 0; row < 60; row++) {
+            for (int col = 0; col < 80; col++) {
                 JPanel cellPanel = cellPanels[row][col];
                 cellPanel.setBackground(Color.darkGray);
                 gridPanel.add(cellPanel);
@@ -180,14 +185,14 @@ public class SimulationGUI extends JFrame{
 
     }
 
-
-
     private void moveAgent(Agent agent) {
         agent.move();
+
 
         SwingUtilities.invokeLater(() -> {
             updateGridAppearance();
         });
+        agent.checkInfection(agents);
     }
 
 

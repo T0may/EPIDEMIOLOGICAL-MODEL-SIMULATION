@@ -22,19 +22,25 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
         while (true) {
             for (Agent agent : agents) {
                 agent.move();
+                agent.checkInfection(agents);
             }
 
             publish(); // user interface update
 
             Thread.sleep(2000); // movement speed
         }
+
     }
+    private void moveAgent(Agent agent) {
+        agent.move();
+    }
+
 
     @Override
     protected void process(List<Void> chunks) {
         //  interface update
-        for (int row = 0; row < 40; row++) {
-            for (int col = 0; col < 50; col++) {
+        for (int row = 0; row < 60; row++) {
+            for (int col = 0; col < 80; col++) {
                 JPanel cellPanel = cellPanels[row][col];
                 cellPanel.setBackground(Color.darkGray);
             }
