@@ -6,12 +6,12 @@ public class Disease extends Agent{
     private int incubationPeriod;
     private double mortalityRate;
 
-//    public Disease(String name, double infectionRate, int incubationPeriod, double mortalityRate) {
+    //    public Disease(String name, double infectionRate, int incubationPeriod, double mortalityRate) {
     public Disease() {
 
     }
 
-    private void setDiseaseProperties(String name)
+    public void setDiseaseProperties(String name)
     {
         switch(name)
         {
@@ -26,7 +26,7 @@ public class Disease extends Agent{
                 mortalityRate = 1;
                 break;
             case "Common Cold":
-                infectionRate = 0.4;
+                infectionRate = 0.3;
                 incubationPeriod = 3;
                 mortalityRate = 0;
             default:
@@ -54,7 +54,13 @@ public class Disease extends Agent{
     }
 
     public void simulateInfection(Agent agent) {
-        // Logika symulacji zakażenia agenta
+        if (agent.getStatus() == Agent.AgentStatus.SUSCEPTIBLE) {
+            double infectionProbability = getInfectionRate();
+            if (Math.random() < infectionProbability) {
+                agent.setStatus(Agent.AgentStatus.INFECTED);
+                System.out.println("Agent has been infected with " + getName());
+            }
+        }
     }
 
     public void updateAgentState(Agent agent) {

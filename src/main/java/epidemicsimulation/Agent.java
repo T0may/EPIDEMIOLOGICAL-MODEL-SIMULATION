@@ -46,7 +46,8 @@ public class Agent{
             this.disease = disease;
             this.recoveryTime = disease.getIncubationPeriod();
             this.color = Color.RED;
-            System.out.println("Agent has been infected with" + disease.getName());
+            this.disease.simulateInfection(this);
+            System.out.println("Agent has been infected with " + disease.getName());
         }else{
             System.out.println("Agent is already" + status);
         }
@@ -69,6 +70,10 @@ public class Agent{
     public Disease getDisease()
     {
         return disease;
+    }
+    public void setDisease(Disease disease)
+    {
+        this.disease = disease;
     }
     public AgentStatus getStatus() {
         return status;
@@ -154,16 +159,18 @@ public class Agent{
             int rowDiff = Math.abs(getRow() - otherAgent.getRow());
             int colDiff = Math.abs(getCol() - otherAgent.getCol());
 
-            System.out.println("Row difference: " + rowDiff);
-            System.out.println("Column difference: " + colDiff);
-            System.out.println("Other agent status: " + otherAgent.getStatus());
-            System.out.println("This agent status: " + this.getStatus());
+//            System.out.println("Row difference: " + rowDiff);
+//            System.out.println("Column difference: " + colDiff);
+//            System.out.println("Other agent status: " + otherAgent.getStatus());
+//            System.out.println("This agent status: " + this.getStatus());
 
             // Check if the other agent is one square away
             if (rowDiff <= 1 && colDiff <= 1 && otherAgent.getStatus() == AgentStatus.SUSCEPTIBLE && this.getStatus() == AgentStatus.INFECTED) {
-
-                otherAgent.infect(this.getDisease());
-                System.out.println("Agent infected another agent with");
+                double infectionProbability = getDisease().getInfectionRate();
+                System.out.println(infectionProbability);
+                if (Math.random() < infectionProbability) {
+                    otherAgent.infect(this.getDisease());
+                }
 
             }
         }

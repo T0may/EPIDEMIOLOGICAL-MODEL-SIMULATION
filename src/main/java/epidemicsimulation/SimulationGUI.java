@@ -146,10 +146,11 @@ public class SimulationGUI extends JFrame{
             if (i < infectedCount) {
                 String diseaseName = diseaseNameTextField.getText();
                 Disease disease = new Disease();
+                disease.setDiseaseProperties(diseaseName);
+                disease.setName(diseaseName);
+
+                agent.setDisease(disease);
                 agent.setStatus(Agent.AgentStatus.INFECTED);
-
-
-                agent.getDisease().setName(diseaseNameTextField.getText());
                 agent.setColor(Color.RED);
             }
             agents.add(agent);
