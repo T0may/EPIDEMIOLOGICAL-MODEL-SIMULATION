@@ -9,12 +9,14 @@ import java.util.List;
 public class AgentMovementWorker extends SwingWorker<Void, Void> {
     private List<Agent> agents;
     private JPanel[][] cellPanels;
+    private int timeCounter;
+    private static final int RECOVERY_DELAY = 10;
 
 
     public AgentMovementWorker(List<Agent> agents, JPanel[][] cellPanels) {
         this.agents = agents;
         this.cellPanels = cellPanels;
-
+        this.timeCounter = 0;
     }
 
     @Override
@@ -23,6 +25,18 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
             for (Agent agent : agents) {
                 agent.move();
                 agent.checkInfection(agents);
+                agent.deacreaseIncubationPeriod(agents);
+            }
+
+            timeCounter++;
+
+            if (timeCounter >= RECOVERY_DELAY) {
+                for (Agent agent : agents) {
+                    if (agent.getStatus() == Agent.AgentStatus.RECOVERED) {
+                        agent.setStatus(Agent.AgentStatus.SUSCEPTIBLE);
+                    }
+                }
+                timeCounter = 0;
             }
 
             publish(); // user interface update
@@ -33,6 +47,7 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
     }
     private void moveAgent(Agent agent) {
         agent.move();
+
     }
 
 
@@ -62,7 +77,5 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
                     break;
             }
         }
-
-
     }
 }

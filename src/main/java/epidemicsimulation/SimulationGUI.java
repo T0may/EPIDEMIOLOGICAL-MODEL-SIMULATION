@@ -152,6 +152,7 @@ public class SimulationGUI extends JFrame{
                 agent.setDisease(disease);
                 agent.setStatus(Agent.AgentStatus.INFECTED);
                 agent.setColor(Color.RED);
+                agent.setIncubationPeriod(disease.getIncubationPeriod());
             }
             agents.add(agent);
         }

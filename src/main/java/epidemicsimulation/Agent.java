@@ -13,6 +13,7 @@ public class Agent{
     private AgentStatus status;
     private Disease disease;
     private int recoveryTime;
+    private int incubationPeriod;
     private int row;
     private int col;
     private int currentRow;
@@ -24,7 +25,6 @@ public class Agent{
 
     public Agent(){
         this.status = status.SUSCEPTIBLE;
-
         this.recoveryTime = 0;
 
     }
@@ -46,24 +46,32 @@ public class Agent{
             this.disease = disease;
             this.recoveryTime = disease.getIncubationPeriod();
             this.color = Color.RED;
-            this.disease.simulateInfection(this);
+            this.incubationPeriod = disease.getIncubationPeriod();
             System.out.println("Agent has been infected with " + disease.getName());
         }else{
             System.out.println("Agent is already" + status);
         }
     }
-
+    public void deacreaseIncubationPeriod(List<Agent> agents){
+        if(this.status == status.INFECTED && this.incubationPeriod > 0){
+            this.incubationPeriod--;
+//            System.out.println(this.incubationPeriod);
+        }
+        if(this.incubationPeriod == 0){
+            recover();
+        }
+    }
     public void recover()
     {
-        if (status == status.INFECTED && recoveryTime <= 0) {
+        if (status == status.INFECTED && this.incubationPeriod <= 0) {
             this.status = status.RECOVERED;
             this.disease = null;
             this.color = Color.GREEN;
             System.out.println("Agent has recovered from the disease");
-        } else if (status == status.INFECTED && recoveryTime > 0) {
+        } else if (status == status.INFECTED && this.incubationPeriod > 0) {
             System.out.println("Agent is still infected");
         } else {
-            System.out.println("Agent is not infected");
+            // System.out.println("Agent is not infected");
         }
     }
 
@@ -126,6 +134,9 @@ public class Agent{
     public int getTargetCol() {
         return targetCol;
     }
+    public void setIncubationPeriod(int incubationPeriod){
+        this.incubationPeriod = incubationPeriod;
+    }
 
     public void move() {
         int currentRow = getCurrentRow();
@@ -158,11 +169,6 @@ public class Agent{
 
             int rowDiff = Math.abs(getRow() - otherAgent.getRow());
             int colDiff = Math.abs(getCol() - otherAgent.getCol());
-
-//            System.out.println("Row difference: " + rowDiff);
-//            System.out.println("Column difference: " + colDiff);
-//            System.out.println("Other agent status: " + otherAgent.getStatus());
-//            System.out.println("This agent status: " + this.getStatus());
 
             // Check if the other agent is one square away
             if (rowDiff <= 1 && colDiff <= 1 && otherAgent.getStatus() == AgentStatus.SUSCEPTIBLE && this.getStatus() == AgentStatus.INFECTED) {

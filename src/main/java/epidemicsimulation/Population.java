@@ -14,28 +14,30 @@ public class Population {
         recoveredCount = 0;
     }
 
-    public List<Agent> getAgents() {
-        return agents;
+    public void addAgent(Agent agent) {
+        agents.add(agent);
     }
 
     public int getInfectedCount() {
-        return infectedCount;
+        int count = 0;
+        for (Agent agent : agents) {
+            if (agent.getStatus() == Agent.AgentStatus.INFECTED) {
+                count++;
+            }
+        }
+        return count;
     }
 
     public int getRecoveredCount() {
-        return recoveredCount;
-    }
-
-    public void addAgent(Agent agent) {
-        agents.add(agent);
-
-        // check agents state and update
-        if (agent.getStatus() == Agent.AgentStatus.INFECTED) {
-            infectedCount++;
-        } else if (agent.getStatus() == Agent.AgentStatus.RECOVERED) {
-            recoveredCount++;
+        int count = 0;
+        for (Agent agent : agents) {
+            if (agent.getStatus() == Agent.AgentStatus.RECOVERED) {
+                count++;
+            }
         }
+        return count;
     }
+
 
     public void updatePopulationState() {
         infectedCount = 0;

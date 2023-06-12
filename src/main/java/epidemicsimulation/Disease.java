@@ -22,12 +22,12 @@ public class Disease extends Agent{
                 break;
             case "Influenza":
                 infectionRate = 0.6;
-                incubationPeriod = 7;
+                incubationPeriod = 2;
                 mortalityRate = 1;
                 break;
             case "Common Cold":
                 infectionRate = 0.3;
-                incubationPeriod = 3;
+                incubationPeriod = 2;
                 mortalityRate = 0;
             default:
                 System.out.println("Invalid disease name");
@@ -62,7 +62,6 @@ public class Disease extends Agent{
             }
         }
     }
-
     public void updateAgentState(Agent agent) {
         // Logika aktualizacji stanu agenta zgodnie z chorobą
     }
