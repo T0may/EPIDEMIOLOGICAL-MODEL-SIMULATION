@@ -153,6 +153,7 @@ public class SimulationGUI extends JFrame{
                 agent.setStatus(Agent.AgentStatus.INFECTED);
                 agent.setColor(Color.RED);
                 agent.setIncubationPeriod(disease.getIncubationPeriod());
+                agent.setMortality_rate(disease.getMortalityRate());
             }
             agents.add(agent);
         }
@@ -182,20 +183,13 @@ public class SimulationGUI extends JFrame{
                 case RECOVERED:
                     cellPanel.setBackground(Color.GREEN);
                     break;
+                case DEAD:
+                    cellPanel.setBackground(Color.darkGray);
+                    break;
             }
         }
-
     }
 
-    private void moveAgent(Agent agent) {
-        agent.move();
-
-
-        SwingUtilities.invokeLater(() -> {
-            updateGridAppearance();
-        });
-        agent.checkInfection(agents);
-    }
 
 
     public static void main(String[] args) {

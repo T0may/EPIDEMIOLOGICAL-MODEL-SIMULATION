@@ -1,5 +1,6 @@
 package epidemicsimulation;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.Random;
@@ -8,11 +9,14 @@ public class Agent{
     public enum AgentStatus {
         SUSCEPTIBLE,
         INFECTED,
-        RECOVERED
+        RECOVERED,
+        DEAD,
+        QUARANTINED
     }
     private AgentStatus status;
     private Disease disease;
     private int recoveryTime;
+    private double mortality_rate;
     private int incubationPeriod;
     private int row;
     private int col;
@@ -26,7 +30,6 @@ public class Agent{
     public Agent(){
         this.status = status.SUSCEPTIBLE;
         this.recoveryTime = 0;
-
     }
     public Agent(int row, int col){
         this();
@@ -41,7 +44,7 @@ public class Agent{
 
     public void infect(Disease disease)
     {
-        if (status == status.SUSCEPTIBLE) {
+        if (this.status == AgentStatus.SUSCEPTIBLE) {
             this.status = status.INFECTED;
             this.disease = disease;
             this.recoveryTime = disease.getIncubationPeriod();
@@ -52,6 +55,15 @@ public class Agent{
             System.out.println("Agent is already" + status);
         }
     }
+    public synchronized void death_count(Disease disease) {
+
+
+            if (this.status == AgentStatus.INFECTED) {
+                    this.status = status.DEAD;
+                    this.disease = disease;
+                    }
+            }
+
     public void deacreaseIncubationPeriod(List<Agent> agents){
         if(this.status == status.INFECTED && this.incubationPeriod > 0){
             this.incubationPeriod--;
@@ -137,6 +149,9 @@ public class Agent{
     public void setIncubationPeriod(int incubationPeriod){
         this.incubationPeriod = incubationPeriod;
     }
+    public void setMortality_rate(double mortalityRate){
+        this.mortality_rate = mortalityRate;
+    }
 
     public void move() {
         int currentRow = getCurrentRow();
@@ -174,8 +189,15 @@ public class Agent{
             if (rowDiff <= 1 && colDiff <= 1 && otherAgent.getStatus() == AgentStatus.SUSCEPTIBLE && this.getStatus() == AgentStatus.INFECTED) {
                 double infectionProbability = getDisease().getInfectionRate();
                 System.out.println(infectionProbability);
+
+                double mortalityProbability = getDisease().getMortalityRate();
+                System.out.println(mortalityProbability);
                 if (Math.random() < infectionProbability) {
                     otherAgent.infect(this.getDisease());
+                }
+                if (Math.random()*(9) < infectionProbability) {
+                    otherAgent.death_count(this.getDisease());
+                    System.out.println("AGENT DEAD");
                 }
 
             }

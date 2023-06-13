@@ -13,6 +13,8 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
     private static final int RECOVERY_DELAY = 10;
 
 
+
+
     public AgentMovementWorker(List<Agent> agents, JPanel[][] cellPanels) {
         this.agents = agents;
         this.cellPanels = cellPanels;
@@ -34,6 +36,7 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
                 for (Agent agent : agents) {
                     if (agent.getStatus() == Agent.AgentStatus.RECOVERED) {
                         agent.setStatus(Agent.AgentStatus.SUSCEPTIBLE);
+
                     }
                 }
                 timeCounter = 0;
@@ -45,10 +48,7 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
         }
 
     }
-    private void moveAgent(Agent agent) {
-        agent.move();
 
-    }
 
 
     @Override
@@ -74,6 +74,9 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
                     break;
                 case RECOVERED:
                     cellPanel.setBackground(Color.GREEN);
+                    break;
+                case DEAD:
+                    cellPanel.setBackground(Color.darkGray);
                     break;
             }
         }

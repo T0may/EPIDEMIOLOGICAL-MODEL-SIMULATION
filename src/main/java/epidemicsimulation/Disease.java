@@ -18,16 +18,16 @@ public class Disease extends Agent{
             case "COVID-19":
                 infectionRate = 0.8;
                 incubationPeriod = 14;
-                mortalityRate = 3;
+                mortalityRate = 4;
                 break;
             case "Influenza":
                 infectionRate = 0.6;
-                incubationPeriod = 2;
-                mortalityRate = 1;
+                incubationPeriod = 10;
+                mortalityRate = 2;
                 break;
             case "Common Cold":
                 infectionRate = 0.3;
-                incubationPeriod = 2;
+                incubationPeriod = 5;
                 mortalityRate = 0;
             default:
                 System.out.println("Invalid disease name");
