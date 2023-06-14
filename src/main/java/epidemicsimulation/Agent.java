@@ -233,7 +233,7 @@ public class Agent{
                 }
                 if (Math.random()*(9) < infectionProbability) {
                     otherAgent.death_count(this.getDisease());
-                    System.out.println("Agent just died");
+//                    System.out.println("Agent just died");
                 }
 
                 if(this.hasSeverSymptoms()){

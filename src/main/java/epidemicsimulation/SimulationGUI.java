@@ -23,6 +23,7 @@ public class SimulationGUI extends JFrame{
     private JLabel susceptibleCountLabel; // Dodane pole do wyświetlania liczby podatnych agentów
     private JLabel quarantinedCountLabel; // Dodane pole do wyświetlania liczby agentów pod kwarantanną
     private JLabel infectedCounterLabel;
+    private SimulationGUI simulationGUI;
 
 
 
@@ -52,6 +53,7 @@ public class SimulationGUI extends JFrame{
 
 //    Utworzenie siatki dla poruszania się agentów (60x80)
     private void createGridPanel() {
+
         gridPanel = new JPanel(new GridLayout(60, 80));
         cellPanels = new JPanel[60][80];
 
@@ -72,6 +74,8 @@ public class SimulationGUI extends JFrame{
 //    Panel kontrolny dla użytkownika
     private void createControlPanel()
     {
+        simulationGUI = this;
+
         JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new GridLayout(5, 2));
         controlPanel.setBackground(Color.DARK_GRAY);
@@ -88,15 +92,13 @@ public class SimulationGUI extends JFrame{
         infectedCountLabel.setForeground(Color.WHITE);
         infectedCountLabelTextField = new JTextField();
 
-
         infectedCounterLabel = new JLabel("Intected agents: 0");
         infectedCounterLabel.setForeground(Color.WHITE);
 
         susceptibleCountLabel = new JLabel("Susceptible Agents: 0");
         susceptibleCountLabel.setForeground(Color.WHITE);
 
-        quarantinedCountLabel = new JLabel("Agents in Quarantine: 0");
-        quarantinedCountLabel.setForeground(Color.WHITE);
+
 
 
         controlPanel.add(diseaseNameLabel);
@@ -109,7 +111,7 @@ public class SimulationGUI extends JFrame{
 
         controlPanel.add(infectedCounterLabel);
         controlPanel.add(susceptibleCountLabel);
-        controlPanel.add(quarantinedCountLabel);
+
 
 
         startButton = new JButton("Start");
@@ -120,9 +122,18 @@ public class SimulationGUI extends JFrame{
                 {
                     return;
                 }
+
                 String diseaseName = diseaseNameTextField.getText();
                 int populationSize = Integer.parseInt(populationSizeTextField.getText());
                 int infectedCount = Integer.parseInt(infectedCountLabelTextField.getText());
+
+                // Sprawdzanie, czy pola tekstowe są puste
+                if (!diseaseName.equalsIgnoreCase("COVID-19") &&
+                        !diseaseName.equalsIgnoreCase("Influenza") &&
+                        !diseaseName.equalsIgnoreCase("Common Cold"))  {
+                    JOptionPane.showMessageDialog(simulationGUI, "Wprowadz poprawna nazwe choroby!", "Blad", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
                 gridPanel.removeAll();
 
@@ -137,7 +148,7 @@ public class SimulationGUI extends JFrame{
                 System.out.println("Disease Name: " + diseaseName);
                 System.out.println("Population size: " + populationSize);
 
-                AgentMovementWorker worker = new AgentMovementWorker(agents, cellPanels);
+                AgentMovementWorker worker = new AgentMovementWorker(agents, cellPanels, simulationGUI);
                 worker.execute();
 
                 simulationStarted = true;
@@ -192,7 +203,7 @@ public class SimulationGUI extends JFrame{
         for (Agent agent : agents) {
             if (agent.getStatus() == Agent.AgentStatus.INFECTED) {
                 infectedCount++;
-                System.out.println("INFECTED COUNT" + infectedCount);
+//                System.out.println("INFECTED COUNT" + infectedCount);
             }
         }
         quarantine.monitorHealthStatus(infectedCount);
@@ -201,7 +212,7 @@ public class SimulationGUI extends JFrame{
         // Aktualizacja wyświetlanych informacji o liczbie zarażonych, liczbie podatnych agentów i liczbie agentów pod kwarantanną
         infectedCounterLabel.setText("Infected Count: " + infectedCount);
         susceptibleCountLabel.setText("Susceptible Agents: " + (agents.size() - infectedCount));
-        quarantinedCountLabel.setText("Agents in Quarantine: " + quarantine.getQuarantinedAgents().size());
+
 
 
         for (int row = 0; row < 60; row++) {
@@ -241,6 +252,15 @@ public class SimulationGUI extends JFrame{
     public Quarantine getQuarantine() {
         return quarantine;
     }
+
+    public void updateSusceptibleCountLabel(int count) {
+        susceptibleCountLabel.setText("Susceptible Agents: " + count);
+    }
+
+    public void updateInfectedCountLabel(int count) {
+        infectedCounterLabel.setText("Infected Count: " + count);
+    }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

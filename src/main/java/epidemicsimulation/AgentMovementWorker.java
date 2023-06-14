@@ -10,12 +10,16 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
     private JPanel[][] cellPanels;
     private int timeCounter;
     private static final int RECOVERY_DELAY = 10;
+    private SimulationGUI simulationGUI;
+    private Quarantine quarantine;
 
 // Konstruktor klasy AgentMovementWorker
-    public AgentMovementWorker(List<Agent> agents, JPanel[][] cellPanels) {
+    public AgentMovementWorker(List<Agent> agents, JPanel[][] cellPanels, SimulationGUI simulationGUI) {
         this.agents = agents;
         this.cellPanels = cellPanels;
         this.timeCounter = 0;
+        this.simulationGUI = simulationGUI;
+        this.quarantine = simulationGUI.getQuarantine();
     }
 
     @Override
@@ -26,8 +30,6 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
                 agent.move();
                 agent.checkInfection(agents);
                 agent.deacreaseIncubationPeriod(agents);
-
-
             }
 
             timeCounter++;
@@ -54,6 +56,19 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
     @Override
     protected void process(List<Void> chunks) {
 
+        int susceptibleCount = 0;
+        int infectedCount = 0;
+
+        for (Agent agent : agents) {
+            if (agent.getStatus() == Agent.AgentStatus.SUSCEPTIBLE) {
+                susceptibleCount++;
+            } else if (agent.getStatus() == Agent.AgentStatus.INFECTED) {
+                infectedCount++;
+            }
+        }
+
+        simulationGUI.updateSusceptibleCountLabel(susceptibleCount);
+        simulationGUI.updateInfectedCountLabel(infectedCount);
 
         // Aktualizacja interfejsu użytkownika
         for (int row = 0; row < 60; row++) {
