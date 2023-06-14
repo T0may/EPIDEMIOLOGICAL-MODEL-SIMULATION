@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.Random;
+import epidemicsimulation.Quarantine;
+
 
 public class Agent{
     public enum AgentStatus {
@@ -25,13 +27,19 @@ public class Agent{
     private int targetRow;
     private int targetCol;
     private Color color;
+    private boolean hasSeverSymptoms;
+    private Quarantine quarantine;
+    private SimulationGUI simulationGUI;
+    private boolean quarantined;
+
+
 
 
     public Agent(){
         this.status = status.SUSCEPTIBLE;
         this.recoveryTime = 0;
     }
-    public Agent(int row, int col){
+    public Agent(int row, int col, boolean hasSeverSymptoms, Quarantine quarantine, SimulationGUI simulationGUI){
         this();
         this.row = row;
         this.col = col;
@@ -40,6 +48,9 @@ public class Agent{
         this.targetRow = row;
         this.targetCol = col;
         this.disease = new Disease();
+        this.hasSeverSymptoms = hasSeverSymptoms;
+        this.quarantine = quarantine;
+        this.simulationGUI = simulationGUI;
     }
 
     public void infect(Disease disease)
@@ -58,11 +69,11 @@ public class Agent{
     public synchronized void death_count(Disease disease) {
 
 
-            if (this.status == AgentStatus.INFECTED) {
-                    this.status = status.DEAD;
-                    this.disease = disease;
-                    }
-            }
+        if (this.status == AgentStatus.INFECTED) {
+            this.status = status.DEAD;
+            this.disease = disease;
+        }
+    }
 
     public void deacreaseIncubationPeriod(List<Agent> agents){
         if(this.status == status.INFECTED && this.incubationPeriod > 0){
@@ -82,7 +93,11 @@ public class Agent{
             System.out.println("Agent has recovered from the disease");
         } else if (status == status.INFECTED && this.incubationPeriod > 0) {
             System.out.println("Agent is still infected");
-        } else {
+
+        }else if(status == status.QUARANTINED)
+        {
+            this.color = Color.YELLOW;
+        }else {
             // System.out.println("Agent is not infected");
         }
     }
@@ -108,7 +123,12 @@ public class Agent{
     }
 
     public void setColor(Color color) {
-        this.color = color;
+        if (status == AgentStatus.QUARANTINED) {
+            // Ustaw inny kolor dla agentów w stanie kwarantanny
+            this.color = Color.YELLOW;
+        } else {
+            this.color = color;
+        }
     }
 
     public void setCurrentPosition(int row, int col) {
@@ -174,6 +194,14 @@ public class Agent{
 //        System.out.println("Row" + newRow);
 //        System.out.println("Col" +newCol);
         setCurrentPosition(newRow, newCol);
+
+        if (recoveryTime > 0) {
+            recoveryTime--;
+            if (recoveryTime == 0) {
+                recover();
+                simulationGUI.getQuarantine().releaseAgent(this);
+            }
+        }
     }
 
     public void checkInfection(List<Agent> agents) {
@@ -188,20 +216,36 @@ public class Agent{
             // Check if the other agent is one square away
             if (rowDiff <= 1 && colDiff <= 1 && otherAgent.getStatus() == AgentStatus.SUSCEPTIBLE && this.getStatus() == AgentStatus.INFECTED) {
                 double infectionProbability = getDisease().getInfectionRate();
-                System.out.println(infectionProbability);
+//                System.out.println(infectionProbability);
 
                 double mortalityProbability = getDisease().getMortalityRate();
-                System.out.println(mortalityProbability);
+//                System.out.println(mortalityProbability);
                 if (Math.random() < infectionProbability) {
                     otherAgent.infect(this.getDisease());
                 }
                 if (Math.random()*(9) < infectionProbability) {
                     otherAgent.death_count(this.getDisease());
-                    System.out.println("AGENT DEAD");
+                    System.out.println("Agent just died");
+                }
+
+                if(this.hasSeverSymptoms()){
+                    quarantine.addToQuarantine(otherAgent);
                 }
 
             }
         }
+    }
+
+    public boolean hasSeverSymptoms() {
+        double probability = 0.3; // Prawdopodobieństwo wystąpienia poważnych objawów (możesz dostosować wartość)
+        return Math.random() < probability;
+    }
+
+    public boolean isQuarantined() {
+        return quarantined;
+    }
+    public void setQuarantined(boolean quarantined) {
+        this.quarantined = quarantined;
     }
 
 }

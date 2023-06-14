@@ -28,6 +28,8 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
                 agent.move();
                 agent.checkInfection(agents);
                 agent.deacreaseIncubationPeriod(agents);
+
+
             }
 
             timeCounter++;
@@ -36,8 +38,8 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
                 for (Agent agent : agents) {
                     if (agent.getStatus() == Agent.AgentStatus.RECOVERED) {
                         agent.setStatus(Agent.AgentStatus.SUSCEPTIBLE);
-
                     }
+
                 }
                 timeCounter = 0;
             }
@@ -68,6 +70,7 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
             switch (agent.getStatus()) {
                 case SUSCEPTIBLE:
                     cellPanel.setBackground(Color.PINK);
+
                     break;
                 case INFECTED:
                     cellPanel.setBackground(agent.getColor());
@@ -77,6 +80,9 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
                     break;
                 case DEAD:
                     cellPanel.setBackground(Color.darkGray);
+                    break;
+                case QUARANTINED:
+                    cellPanel.setBackground(Color.YELLOW);
                     break;
             }
         }

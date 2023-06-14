@@ -18,6 +18,8 @@ public class SimulationGUI extends JFrame{
     private List<Agent> agents;
     private JPanel[][] cellPanels;
     private boolean simulationStarted;
+    private Quarantine quarantine;
+    private static final double SEVERE_SYMPTOMS_PERCENTAGE = 0.3;
 
 
 
@@ -35,6 +37,9 @@ public class SimulationGUI extends JFrame{
         pack();
         setLocationRelativeTo(null);
         simulationStarted = false;
+
+        quarantine = new Quarantine(10, agents, this);
+
 
     }
 
@@ -139,8 +144,9 @@ public class SimulationGUI extends JFrame{
             int row = random.nextInt(60);
             int col = random.nextInt(80);
 
+            boolean hasSevereSymptoms = Math.random() < SEVERE_SYMPTOMS_PERCENTAGE;
 
-            Agent agent = new Agent(row, col);
+            Agent agent = new Agent(row, col, hasSevereSymptoms, quarantine, this);
             agent.setCurrentPosition(row, col);
             agent.setTargetPosition(row, col);
             if (i < infectedCount) {
@@ -161,6 +167,15 @@ public class SimulationGUI extends JFrame{
     }
 
     private void updateGridAppearance() {
+        int infectedCount = 0;
+        for (Agent agent : agents) {
+            if (agent.getStatus() == Agent.AgentStatus.INFECTED) {
+                infectedCount++;
+                System.out.println("INFECTED COUNT" + infectedCount);
+            }
+        }
+        quarantine.monitorHealthStatus(infectedCount);
+
         for (int row = 0; row < 60; row++) {
             for (int col = 0; col < 80; col++) {
                 JPanel cellPanel = cellPanels[row][col];
@@ -168,7 +183,6 @@ public class SimulationGUI extends JFrame{
                 gridPanel.add(cellPanel);
             }
         }
-
         for (Agent agent : agents) {
             int row = agent.getRow();
             int col = agent.getCol();
@@ -186,10 +200,16 @@ public class SimulationGUI extends JFrame{
                 case DEAD:
                     cellPanel.setBackground(Color.darkGray);
                     break;
+                case QUARANTINED:
+                    cellPanel.setBackground(Color.YELLOW);
+                    break;
             }
         }
     }
 
+    public Quarantine getQuarantine() {
+        return quarantine;
+    }
 
 
     public static void main(String[] args) {

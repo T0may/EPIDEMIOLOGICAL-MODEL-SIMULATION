@@ -1,4 +1,6 @@
 package epidemicsimulation;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,7 @@ public class Quarantine {
         this.currentOccupancy = 0;
         this.quarantinedAgents = new ArrayList<>();
         this.agents = agents;
+        this.simulationGUI = simulationGUI;
     }
 
     public void addToQuarantine(Agent agent) {
@@ -22,37 +25,25 @@ public class Quarantine {
             agent.setStatus(Agent.AgentStatus.QUARANTINED);
             currentOccupancy++;
             System.out.println("Agent " + agent + " has been added to the quarantine");
+            agent.setQuarantined(true);
+
+
         } else {
             agent.setStatus(Agent.AgentStatus.SUSCEPTIBLE);
+            agent.setColor(Color.PINK);
             System.out.println("Quarantine is full, cannot add more agents");
         }
     }
 
-    public void monitorHealthStatus() {
-        int infectedCount = 0;
-
-        for (Agent agent : quarantinedAgents) {
-            if (agent.getStatus() == Agent.AgentStatus.INFECTED) {
-                infectedCount++;
-            }
-        }
+    public void monitorHealthStatus(int infectedCount) {
 
         if (infectedCount > 20) {
             System.out.println("Quarantine zone established for infected agents");
 
-            int startRow = 0;
-            int startCol = 0;
-            int endRow = 19;
-            int endCol = 19;
 
             for (Agent agent : quarantinedAgents) {
-                int row = agent.getRow();
-                int col = agent.getCol();
+                System.out.println("Agent " + agent + " is in the quarantine zone");
 
-                if (row >= startRow && row <= endRow && col >= startCol && col <= endCol) {
-                    agent.setStatus(Agent.AgentStatus.SUSCEPTIBLE);
-                    System.out.println("Agent " + agent + " is in the quarantine zone");
-                }
             }
         }
     }
@@ -61,6 +52,8 @@ public class Quarantine {
         if (quarantinedAgents.contains(agent)) {
             quarantinedAgents.remove(agent);
             currentOccupancy--;
+            agent.setStatus(Agent.AgentStatus.SUSCEPTIBLE);
+            agent.setColor(Color.PINK);
             System.out.println("Agent " + agent + " has been released from the quarantine");
         } else {
             System.out.println("Agent " + agent + " is not in the quarantine");
