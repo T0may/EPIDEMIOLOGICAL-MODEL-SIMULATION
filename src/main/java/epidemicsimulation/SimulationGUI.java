@@ -24,6 +24,8 @@ public class SimulationGUI extends JFrame{
     private JLabel quarantinedCountLabel; // Dodane pole do wyświetlania liczby agentów pod kwarantanną
     private JLabel infectedCounterLabel;
     private SimulationGUI simulationGUI;
+    private Statistics statistics;
+    private Population population;
 
 
 
@@ -42,9 +44,11 @@ public class SimulationGUI extends JFrame{
         pack();
         setLocationRelativeTo(null);
         simulationStarted = false;
+        simulationGUI = this;
 
 //      zainicjalizowana klasa Quarantine z parametrami
         quarantine = new Quarantine(10, agents, this);
+//      zainicjalizowana klasa statistics z parametrami
 
 
 
@@ -166,7 +170,8 @@ public class SimulationGUI extends JFrame{
 //    inicjalizacja symulacji
     private void initialize(int populationSize, int infectedCount) {
         agents = new ArrayList<>();
-
+        population = new Population();
+        statistics = new Statistics();
         // Tworzenie agentów i losowe przypisanie ich do komórek siatki
         Random random = new Random();
         for (int i = 0; i < populationSize; i++) {
@@ -193,6 +198,8 @@ public class SimulationGUI extends JFrame{
                 agent.setMortality_rate(disease.getMortalityRate());
             }
             agents.add(agent);
+
+
         }
 
     }
@@ -208,6 +215,10 @@ public class SimulationGUI extends JFrame{
         }
         quarantine.monitorHealthStatus(infectedCount);
 
+        statistics.setSimulationGUI(simulationGUI);
+        int susceptibleCount = agents.size() - infectedCount;
+        statistics.updateSusceptibleCount(susceptibleCount);
+        statistics.updateInfectedCount(statistics.getInfectedCount());
 
         // Aktualizacja wyświetlanych informacji o liczbie zarażonych, liczbie podatnych agentów i liczbie agentów pod kwarantanną
         infectedCounterLabel.setText("Infected Count: " + infectedCount);
@@ -260,7 +271,6 @@ public class SimulationGUI extends JFrame{
     public void updateInfectedCountLabel(int count) {
         infectedCounterLabel.setText("Infected Count: " + count);
     }
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

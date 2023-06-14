@@ -42,6 +42,16 @@ public class Population {
         return count;
     }
 
+    public int getSusceptibleCount() {
+        int count = 0;
+        for (Agent agent : agents) {
+            if (agent.getStatus() == Agent.AgentStatus.SUSCEPTIBLE) {
+                count++;
+            }
+        }
+        return count;
+    }
+
 
     public void updatePopulationState() {
         infectedCount = 0;

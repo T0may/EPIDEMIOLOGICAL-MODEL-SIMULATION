@@ -47,6 +47,13 @@ public class Quarantine {
             }
         }
     }
+//    logika zatrzymania kwarantanny gdy intectedAgents = 0
+    public void stopQuarantine() {
+        for (Agent agent : quarantinedAgents) {
+            agent.setQuarantined(false);
+        }
+        quarantinedAgents.clear();
+    }
 
     // Zwolnienie agenta z kwarantanny
     public void releaseAgent(Agent agent) {

@@ -1,21 +1,34 @@
 package epidemicsimulation;
 
-import java.util.List;
-
-public class Statistics{
+public class Statistics {
+    private int susceptibleCount;
+    private int infectedCount;
     private Population population;
-    private Disease disease;
+    private SimulationGUI simulationGUI;
+    private Quarantine quarantine;
 
-    // Konstruktor klasy Statistics, przyjmuje populację jako parametr
-    public Statistics(Population population) {
-        this.population = population;
+
+    public void setSimulationGUI(SimulationGUI simulationGUI) {
+        this.simulationGUI = simulationGUI;
     }
-    // Obliczanie liczby zarażonych agentów
-    public int calculateInfectedCount() {
-        return population.getInfectedCount();
+
+
+    public int getInfectedCount() {
+        return infectedCount;
     }
-    // Obliczanie liczby wyzdrowiałych agentów
-    public int calculateRecoveredCount() {
-        return population.getRecoveredCount();
+
+    public void updateSusceptibleCount(int count) {
+        susceptibleCount = count;
+        simulationGUI.updateSusceptibleCountLabel(count);
     }
+
+    public void updateInfectedCount(int count) {
+        infectedCount = count;
+        simulationGUI.updateInfectedCountLabel(count);
+        if (infectedCount == 0 && quarantine != null) {
+            quarantine.stopQuarantine();
+        }
+    }
+
+
 }
