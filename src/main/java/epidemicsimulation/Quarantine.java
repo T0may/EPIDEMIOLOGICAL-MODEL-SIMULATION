@@ -11,6 +11,7 @@ public class Quarantine {
     private List<Agent> agents;
     private SimulationGUI simulationGUI;
 
+    // Konstruktor klasy Quarantine
     public Quarantine(int capacity, List<Agent> agents, SimulationGUI simulationGUI) {
         this.capacity = capacity;
         this.currentOccupancy = 0;
@@ -19,60 +20,49 @@ public class Quarantine {
         this.simulationGUI = simulationGUI;
     }
 
+    // Dodanie agenta do kwarantanny
     public void addToQuarantine(Agent agent) {
         if (currentOccupancy < capacity) {
             quarantinedAgents.add(agent);
             agent.setStatus(Agent.AgentStatus.QUARANTINED);
             currentOccupancy++;
-            System.out.println("Agent " + agent + " has been added to the quarantine");
+//            System.out.println("Agent " + agent + " has been added to the quarantine");
             agent.setQuarantined(true);
-
-
         } else {
             agent.setStatus(Agent.AgentStatus.SUSCEPTIBLE);
             agent.setColor(Color.PINK);
-            System.out.println("Quarantine is full, cannot add more agents");
+//            System.out.println("Quarantine is full, cannot add more agents");
         }
     }
 
+    // Monitorowanie stanu zdrowia w kwarantannie
     public void monitorHealthStatus(int infectedCount) {
 
         if (infectedCount > 20) {
-            System.out.println("Quarantine zone established for infected agents");
-
+//            System.out.println("Quarantine zone established for infected agents");
 
             for (Agent agent : quarantinedAgents) {
-                System.out.println("Agent " + agent + " is in the quarantine zone");
+//                System.out.println("Agent " + agent + " is in the quarantine zone");
 
             }
         }
     }
 
+    // Zwolnienie agenta z kwarantanny
     public void releaseAgent(Agent agent) {
         if (quarantinedAgents.contains(agent)) {
             quarantinedAgents.remove(agent);
             currentOccupancy--;
             agent.setStatus(Agent.AgentStatus.SUSCEPTIBLE);
             agent.setColor(Color.PINK);
-            System.out.println("Agent " + agent + " has been released from the quarantine");
+//            System.out.println("Agent " + agent + " has been released from the quarantine");
         } else {
-            System.out.println("Agent " + agent + " is not in the quarantine");
+//            System.out.println("Agent " + agent + " is not in the quarantine");
         }
     }
 
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
-    public int getCurrentOccupancy() {
-        return currentOccupancy;
-    }
-
-    public void setCurrentOccupancy(int currentOccupancy) {
-        this.currentOccupancy = currentOccupancy;
+    public List<Agent> getQuarantinedAgents()
+    {
+        return quarantinedAgents;
     }
 }

@@ -8,16 +8,19 @@ public class Population {
     private int infectedCount;
     private int recoveredCount;
 
+    // Konstruktor klasy Population
     public Population() {
         agents = new ArrayList<>();
         infectedCount = 0;
         recoveredCount = 0;
     }
 
+    // Dodanie agenta do populacji
     public void addAgent(Agent agent) {
         agents.add(agent);
     }
 
+    // Pobranie liczby zainfekowanych agentów
     public int getInfectedCount() {
         int count = 0;
         for (Agent agent : agents) {
@@ -28,6 +31,7 @@ public class Population {
         return count;
     }
 
+    // Pobranie liczby wyzdrowiałych agentów
     public int getRecoveredCount() {
         int count = 0;
         for (Agent agent : agents) {

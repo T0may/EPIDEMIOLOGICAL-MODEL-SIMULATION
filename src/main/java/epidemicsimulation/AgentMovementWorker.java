@@ -1,7 +1,6 @@
 package epidemicsimulation;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.util.List;
 
@@ -12,9 +11,7 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
     private int timeCounter;
     private static final int RECOVERY_DELAY = 10;
 
-
-
-
+// Konstruktor klasy AgentMovementWorker
     public AgentMovementWorker(List<Agent> agents, JPanel[][] cellPanels) {
         this.agents = agents;
         this.cellPanels = cellPanels;
@@ -24,6 +21,7 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
     @Override
     protected Void doInBackground() throws Exception {
         while (true) {
+            // Poruszanie agentami, sprawdzanie zakażeń, zmniejszanie okresu uleczenia
             for (Agent agent : agents) {
                 agent.move();
                 agent.checkInfection(agents);
@@ -34,6 +32,7 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
 
             timeCounter++;
 
+            // Przywracanie agentów do stanu pierwotnego po określonym czasie
             if (timeCounter >= RECOVERY_DELAY) {
                 for (Agent agent : agents) {
                     if (agent.getStatus() == Agent.AgentStatus.RECOVERED) {
@@ -44,18 +43,19 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
                 timeCounter = 0;
             }
 
-            publish(); // user interface update
+            publish(); // Aktualizacja interfejsu użytkownika
 
-            Thread.sleep(2000); // movement speed
+
+            Thread.sleep(2000); // Prędkość poruszania agentów
         }
 
     }
 
-
-
     @Override
     protected void process(List<Void> chunks) {
-        //  interface update
+
+
+        // Aktualizacja interfejsu użytkownika
         for (int row = 0; row < 60; row++) {
             for (int col = 0; col < 80; col++) {
                 JPanel cellPanel = cellPanels[row][col];
@@ -67,10 +67,11 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
             int row = agent.getRow();
             int col = agent.getCol();
             JPanel cellPanel = cellPanels[row][col];
+
+            // warunki dla których agent zmienia swój kolor dla poszczególnego stanu
             switch (agent.getStatus()) {
                 case SUSCEPTIBLE:
                     cellPanel.setBackground(Color.PINK);
-
                     break;
                 case INFECTED:
                     cellPanel.setBackground(agent.getColor());

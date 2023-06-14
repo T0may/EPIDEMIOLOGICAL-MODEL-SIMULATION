@@ -15,44 +15,47 @@ public class Agent{
         DEAD,
         QUARANTINED
     }
-    private AgentStatus status;
-    private Disease disease;
-    private int recoveryTime;
-    private double mortality_rate;
-    private int incubationPeriod;
-    private int row;
-    private int col;
-    private int currentRow;
-    private int currentCol;
-    private int targetRow;
-    private int targetCol;
-    private Color color;
-    private boolean hasSeverSymptoms;
-    private Quarantine quarantine;
-    private SimulationGUI simulationGUI;
-    private boolean quarantined;
+    private AgentStatus status; // Aktualny status agenta
+    private Disease disease; // Choroba, którą agent przechodzi
+    private int recoveryTime; // Pozostały czas do wyzdrowienia
+    private double mortality_rate; // Współczynnik śmiertelności
+    private int incubationPeriod; // Okres wyleczania choroby
+    private int row; // Wiersz, w którym znajduje się agent na planszy
+    private int col; // Kolumna, w której znajduje się agent na planszy
+    private int currentRow; // Aktualny wiersz, w którym znajduje się agent na planszy
+    private int currentCol; // Aktualna kolumna, w której znajduje się agent na planszy
+    private int targetRow; // Wiersz, do którego agent zmierza
+    private int targetCol; // Kolumna, do której agent zmierza
+    private Color color; // Kolor agenta na planszy
+    private Quarantine quarantine; // Obiekt kwarantanny
+    private SimulationGUI simulationGUI; // Obiekt GUI symulacji
+    private boolean quarantined; // Czy agent jest w kwarantannie
+    private boolean hasSeverSymptoms; // Czy agent ma poważne objawy
 
 
 
-
+// konstruktor domyślny klasy Agent
     public Agent(){
         this.status = status.SUSCEPTIBLE;
         this.recoveryTime = 0;
     }
+
+//    Konstruktor parametryczny
     public Agent(int row, int col, boolean hasSeverSymptoms, Quarantine quarantine, SimulationGUI simulationGUI){
-        this();
+        this(); // Wywołanie domyślnego konstruktora
         this.row = row;
         this.col = col;
         this.currentRow = row;
         this.currentCol = col;
         this.targetRow = row;
         this.targetCol = col;
-        this.disease = new Disease();
-        this.hasSeverSymptoms = hasSeverSymptoms;
+        this.disease = new Disease(); // Tworzenie nowej choroby dla agenta
         this.quarantine = quarantine;
+        this.hasSeverSymptoms = hasSeverSymptoms;
         this.simulationGUI = simulationGUI;
     }
 
+    // Metoda infekująca agenta daną chorobą
     public void infect(Disease disease)
     {
         if (this.status == AgentStatus.SUSCEPTIBLE) {
@@ -61,38 +64,40 @@ public class Agent{
             this.recoveryTime = disease.getIncubationPeriod();
             this.color = Color.RED;
             this.incubationPeriod = disease.getIncubationPeriod();
-            System.out.println("Agent has been infected with " + disease.getName());
+//            System.out.println("Agent has been infected with " + disease.getName());
         }else{
-            System.out.println("Agent is already" + status);
+//            System.out.println("Agent is already" + status);
         }
     }
+
+    // Metoda zwiększająca licznik zmarłych agentów
     public synchronized void death_count(Disease disease) {
-
-
         if (this.status == AgentStatus.INFECTED) {
             this.status = status.DEAD;
             this.disease = disease;
         }
     }
 
+    // Metoda zmniejszająca czas wyleczania choroby i powodująca wyzdrowienie agenta po zakończeniu okresu wyleczania
     public void deacreaseIncubationPeriod(List<Agent> agents){
         if(this.status == status.INFECTED && this.incubationPeriod > 0){
             this.incubationPeriod--;
-//            System.out.println(this.incubationPeriod);
         }
         if(this.incubationPeriod == 0){
             recover();
         }
     }
+
+    // Metoda powodująca wyzdrowienie agenta
     public void recover()
     {
         if (status == status.INFECTED && this.incubationPeriod <= 0) {
             this.status = status.RECOVERED;
             this.disease = null;
             this.color = Color.GREEN;
-            System.out.println("Agent has recovered from the disease");
+//            System.out.println("Agent has recovered from the disease");
         } else if (status == status.INFECTED && this.incubationPeriod > 0) {
-            System.out.println("Agent is still infected");
+//            System.out.println("Agent is still infected");
 
         }else if(status == status.QUARANTINED)
         {
@@ -102,6 +107,7 @@ public class Agent{
         }
     }
 
+//    settery i gettery
     public Disease getDisease()
     {
         return disease;
@@ -124,7 +130,7 @@ public class Agent{
 
     public void setColor(Color color) {
         if (status == AgentStatus.QUARANTINED) {
-            // Ustaw inny kolor dla agentów w stanie kwarantanny
+            // Ustawianie innego koloru dla agentów w stanie kwarantanny
             this.color = Color.YELLOW;
         } else {
             this.color = color;
@@ -173,6 +179,7 @@ public class Agent{
         this.mortality_rate = mortalityRate;
     }
 
+    // Metoda odpowiedzialna za poruszanie się agenta
     public void move() {
         int currentRow = getCurrentRow();
         int currentCol = getCurrentCol();
@@ -193,7 +200,7 @@ public class Agent{
 
 //        System.out.println("Row" + newRow);
 //        System.out.println("Col" +newCol);
-        setCurrentPosition(newRow, newCol);
+        setCurrentPosition(newRow, newCol); // Przypisanie nowej pozycji do agenta
 
         if (recoveryTime > 0) {
             recoveryTime--;
@@ -204,6 +211,7 @@ public class Agent{
         }
     }
 
+    // Metoda sprawdzająca, czy agent został zakażony przez innych agentów
     public void checkInfection(List<Agent> agents) {
         for (Agent otherAgent : agents) {
             if (this == otherAgent) {
@@ -213,7 +221,7 @@ public class Agent{
             int rowDiff = Math.abs(getRow() - otherAgent.getRow());
             int colDiff = Math.abs(getCol() - otherAgent.getCol());
 
-            // Check if the other agent is one square away
+            // Sprawdzenie, czy inny agent jest oddalony o jedno pole
             if (rowDiff <= 1 && colDiff <= 1 && otherAgent.getStatus() == AgentStatus.SUSCEPTIBLE && this.getStatus() == AgentStatus.INFECTED) {
                 double infectionProbability = getDisease().getInfectionRate();
 //                System.out.println(infectionProbability);
@@ -236,8 +244,9 @@ public class Agent{
         }
     }
 
+    // Metoda sprawdzająca, czy agent ma poważne objawy, przez co trafi do kwarantanny
     public boolean hasSeverSymptoms() {
-        double probability = 0.3; // Prawdopodobieństwo wystąpienia poważnych objawów (możesz dostosować wartość)
+        double probability = 0.3; // Prawdopodobieństwo wystąpienia poważnych objawów
         return Math.random() < probability;
     }
 
