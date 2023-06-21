@@ -5,15 +5,24 @@ import java.awt.*;
 import java.util.List;
 
 
+/**
+ * Klasa AgentMovementWorker umożliwia płynne poruszanie się agentów po planszy.
+ * Rozszerzenie SwingWorker
+ */
 public class AgentMovementWorker extends SwingWorker<Void, Void> {
     private List<Agent> agents;
     private JPanel[][] cellPanels;
     private int timeCounter;
-    private static final int RECOVERY_DELAY = 10;
+    private static final int RECOVERY_DELAY = 12;
     private SimulationGUI simulationGUI;
     private Quarantine quarantine;
 
-// Konstruktor klasy AgentMovementWorker
+    /**
+     * Konstruktor klasy AgentMovementWorker
+     * @param agents
+     * @param cellPanels
+     * @param simulationGUI
+     */
     public AgentMovementWorker(List<Agent> agents, JPanel[][] cellPanels, SimulationGUI simulationGUI) {
         this.agents = agents;
         this.cellPanels = cellPanels;
@@ -49,8 +58,16 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
 
 
             Thread.sleep(2000); // Prędkość poruszania agentów
-        }
 
+
+            int infectedCount = simulationGUI.getInfectedCount();
+            if (infectedCount == 0) {
+                break;
+            }
+
+        }
+        JOptionPane.showMessageDialog(simulationGUI, "Symulacja zakonczona. Liczba zarazonych agentow wynosi 0.", "Informacja", JOptionPane.INFORMATION_MESSAGE);
+        return null;
     }
 
     @Override
@@ -69,6 +86,7 @@ public class AgentMovementWorker extends SwingWorker<Void, Void> {
 
         simulationGUI.updateSusceptibleCountLabel(susceptibleCount);
         simulationGUI.updateInfectedCountLabel(infectedCount);
+
 
         // Aktualizacja interfejsu użytkownika
         for (int row = 0; row < 60; row++) {

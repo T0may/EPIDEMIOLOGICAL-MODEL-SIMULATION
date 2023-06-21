@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Klasa SimulationGUI reprezentuje interfejs graficzny symulacji epidemii.
+ */
 public class SimulationGUI extends JFrame{
     private JPanel gridPanel;
     private JTextField diseaseNameTextField;
@@ -28,8 +31,9 @@ public class SimulationGUI extends JFrame{
     private Population population;
 
 
-
-    //  domyślna klasa SimlationGUI
+    /**
+     * Konstruktor klasy SimulationGUI.
+     */
     public SimulationGUI()
     {
         setTitle("Epidemiological Model Simulation");
@@ -55,7 +59,9 @@ public class SimulationGUI extends JFrame{
 
     }
 
-//    Utworzenie siatki dla poruszania się agentów (60x80)
+    /**
+     * Tworzy panel sitaki dla poruszających się agentów.
+     */
     private void createGridPanel() {
 
         gridPanel = new JPanel(new GridLayout(60, 80));
@@ -75,7 +81,11 @@ public class SimulationGUI extends JFrame{
         add(gridPanel, BorderLayout.CENTER);
     }
 
-//    Panel kontrolny dla użytkownika
+
+
+    /**
+     * Tworzy panel siatki dla poruszania się agentów.
+     */
     private void createControlPanel()
     {
         simulationGUI = this;
@@ -167,7 +177,11 @@ public class SimulationGUI extends JFrame{
         add(controlPanel2, BorderLayout.NORTH);
     }
 
-//    inicjalizacja symulacji
+    /**
+     * Inicjalizuje symulację.
+     * @param populationSize
+     * @param infectedCount
+     */
     private void initialize(int populationSize, int infectedCount) {
         agents = new ArrayList<>();
         population = new Population();
@@ -198,13 +212,13 @@ public class SimulationGUI extends JFrame{
                 agent.setMortality_rate(disease.getMortalityRate());
             }
             agents.add(agent);
-
-
         }
 
     }
 
-    // Aktualizacja wyglądu siatki
+    /**
+     * Aktualizuje wygląd siatki wraz ze statusem agentów.
+     */
     private void updateGridAppearance() {
         int infectedCount = 0;
         for (Agent agent : agents) {
@@ -212,10 +226,15 @@ public class SimulationGUI extends JFrame{
                 infectedCount++;
 //                System.out.println("INFECTED COUNT" + infectedCount);
             }
+            population.addAgent(agent);
         }
-        quarantine.monitorHealthStatus(infectedCount);
 
         statistics.setSimulationGUI(simulationGUI);
+
+        population.getRecoveredCount();
+        population.getInfectedCount();
+        population.getSusceptibleCount();
+        population.updatePopulationState();
         int susceptibleCount = agents.size() - infectedCount;
         statistics.updateSusceptibleCount(susceptibleCount);
         statistics.updateInfectedCount(statistics.getInfectedCount());
@@ -224,7 +243,11 @@ public class SimulationGUI extends JFrame{
         infectedCounterLabel.setText("Infected Count: " + infectedCount);
         susceptibleCountLabel.setText("Susceptible Agents: " + (agents.size() - infectedCount));
 
-
+        if (infectedCount == 0) {
+            JOptionPane.showMessageDialog(this, "Symulacja zakończona. Liczba zarażonych agentów wynosi 0.", "Koniec symulacji", JOptionPane.INFORMATION_MESSAGE);
+            simulationStarted = false;
+            return; // Zatrzymuje dalsze aktualizowanie wyglądu siatki
+        }
 
         for (int row = 0; row < 60; row++) {
             for (int col = 0; col < 80; col++) {
@@ -259,19 +282,48 @@ public class SimulationGUI extends JFrame{
         }
     }
 
-//    Getter
+    /**
+     * Pobiera instancję klasy Quarantine
+     * @return instancja klasy Quarantine
+     */
     public Quarantine getQuarantine() {
         return quarantine;
     }
 
+    /**
+     * Aktualizuje etykietę z liczbą podatnych agentów.
+     * @param count
+     */
     public void updateSusceptibleCountLabel(int count) {
         susceptibleCountLabel.setText("Susceptible Agents: " + count);
     }
 
+    /**
+     * Aktualizuję etykietę z liczbą zarażonych agentów.
+     * @param count
+     */
     public void updateInfectedCountLabel(int count) {
         infectedCounterLabel.setText("Infected Count: " + count);
     }
 
+    /**
+     * zlicza aktualną liczbę zarazonych agentów
+     * @return liczba zarazonych agentow
+     */
+    public int getInfectedCount() {
+        int infectedCount = 0;
+        for (Agent agent : agents) {
+            if (agent.getStatus() == Agent.AgentStatus.INFECTED) {
+                infectedCount++;
+            }
+        }
+        return infectedCount;
+    }
+
+    /**
+     * Metoda główna programu.
+     * @param args
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             SimulationGUI gui = new SimulationGUI();

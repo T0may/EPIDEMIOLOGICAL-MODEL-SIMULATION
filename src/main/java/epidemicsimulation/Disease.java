@@ -1,17 +1,25 @@
 package epidemicsimulation;
 
+/**
+ * Klasa Disease reprezentuje choroby na które może zachorować agent
+ */
 public class Disease extends Agent{
     private String name;
     private double infectionRate;
     private int incubationPeriod;
     private double mortalityRate;
 
-//    konstruktor klasy Disease
+    /**
+     * Konstruktor klasy Disease.
+     */
     public Disease() {
 
     }
 
-//    Ustawienie właściwości choroby na podjstawie jej nazwy
+    /**
+     * Ustawienie właściwości choroby na podjstawie jej nazwy.
+     * @param name nazwa
+     */
     public void setDiseaseProperties(String name)
     {
         switch(name)
@@ -19,16 +27,16 @@ public class Disease extends Agent{
             case "COVID-19":
                 infectionRate = 0.8;
                 incubationPeriod = 14;
-                mortalityRate = 4;
+                mortalityRate = 0.4;
                 break;
             case "Influenza":
                 infectionRate = 0.6;
                 incubationPeriod = 10;
-                mortalityRate = 2;
+                mortalityRate = 0.2;
                 break;
             case "Common Cold":
-                infectionRate = 0.3;
-                incubationPeriod = 5;
+                infectionRate = 0.5;
+                incubationPeriod = 8;
                 mortalityRate = 0;
             default:
                 System.out.println("Invalid disease name");
@@ -36,26 +44,42 @@ public class Disease extends Agent{
         }
     }
 
-//    Pobieranie nazwy choroby
+    /**
+     * Metoda pobierająca nazwę choroby.
+     * @return nazwa
+     */
     public String getName() {
         return name;
     }
 
-//    Ustawienie nazwy choroby
+    /**
+     * metoda która ustawia nazwę choroby.
+     * @param name nazwa
+     */
     public void setName(String name) {
         this.name = name;
     }
 
-    // Pobieranie wskaźnika zarażalności
+    /**
+     * Metoda pobierająca wskaźnik zarażalności przesyłany do klasy Agent.java.
+     * @return współczynnik zarażalności
+     */
     public double getInfectionRate() {
         return infectionRate;
     }
 
-    // Pobieranie okresu wylęgania
+    /**
+     * Metoda która pobiera czas kwarantanny.
+     * @return czas kwarantanny
+     */
     public int getIncubationPeriod() {
         return incubationPeriod;
     }
-    // Pobieranie wskaźnika śmiertelności
+
+    /**
+     * Metoda pobierająca wskaźnik śmiertelności.
+     * @return współczynnik śmiertelności
+     */
     public double getMortalityRate() {
         return mortalityRate;
     }

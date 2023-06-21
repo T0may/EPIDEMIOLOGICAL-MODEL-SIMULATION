@@ -4,6 +4,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klasa Quarantine odpowiedzialna jest za funkcjonalność kwarantanny podczas symulacji
+ */
 public class Quarantine {
     private int capacity;
     private int currentOccupancy;
@@ -11,7 +14,12 @@ public class Quarantine {
     private List<Agent> agents;
     private SimulationGUI simulationGUI;
 
-    // Konstruktor klasy Quarantine
+    /**
+     * Konstruktor klasy Quarantine.
+     * @param capacity pojemność kwarantanny
+     * @param agents lista agentów
+     * @param simulationGUI obiekt SimulationGUI
+     */
     public Quarantine(int capacity, List<Agent> agents, SimulationGUI simulationGUI) {
         this.capacity = capacity;
         this.currentOccupancy = 0;
@@ -20,7 +28,10 @@ public class Quarantine {
         this.simulationGUI = simulationGUI;
     }
 
-    // Dodanie agenta do kwarantanny
+    /**
+     * Konstruktor klasy Quarantine.
+     * @param agent
+     */
     public void addToQuarantine(Agent agent) {
         if (currentOccupancy < capacity) {
             quarantinedAgents.add(agent);
@@ -35,19 +46,9 @@ public class Quarantine {
         }
     }
 
-    // Monitorowanie stanu zdrowia w kwarantannie
-    public void monitorHealthStatus(int infectedCount) {
-
-        if (infectedCount > 20) {
-//            System.out.println("Quarantine zone established for infected agents");
-
-            for (Agent agent : quarantinedAgents) {
-//                System.out.println("Agent " + agent + " is in the quarantine zone");
-
-            }
-        }
-    }
-//    logika zatrzymania kwarantanny gdy intectedAgents = 0
+    /**
+     * Zatrzymanie kwarantanny na podstawie aktualnej liczby chorych agentów
+     */
     public void stopQuarantine() {
         for (Agent agent : quarantinedAgents) {
             agent.setQuarantined(false);
@@ -56,6 +57,11 @@ public class Quarantine {
     }
 
     // Zwolnienie agenta z kwarantanny
+
+    /**
+     * Zwolnienie agenta z kwarantanny
+     * @param agent
+     */
     public void releaseAgent(Agent agent) {
         if (quarantinedAgents.contains(agent)) {
             quarantinedAgents.remove(agent);
@@ -68,6 +74,11 @@ public class Quarantine {
         }
     }
 
+    /**
+     * Pobranie listy agentów w kwarantannie.
+     *
+     * @return lista agentów w kwarantannie
+     */
     public List<Agent> getQuarantinedAgents()
     {
         return quarantinedAgents;
